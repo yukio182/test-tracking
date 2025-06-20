@@ -159,7 +159,7 @@ async function testSheetAccess(accessToken: string, sheetId: string) {
     throw new Error(`Sheet metadata access failed: ${metadataResponse.status} - ${errorText}`)
   }
 
-  const metadata = await metadataResponse.json()
+  const metadata = await metadataResponse.json() as any
   console.log('🔍 DEBUG SHEETS: Sheet metadata:', metadata.properties?.title)
 
   // Test 2: Try to read values
@@ -180,7 +180,7 @@ async function testSheetAccess(accessToken: string, sheetId: string) {
     }
   }
 
-  const values = await valuesResponse.json()
+  const values = await valuesResponse.json() as any
   console.log('🔍 DEBUG SHEETS: Values read success:', values)
 
   return {
