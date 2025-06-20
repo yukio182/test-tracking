@@ -9,6 +9,16 @@ interface GoogleOAuthResponse {
   access_token: string
 }
 
+interface SheetMetadata {
+  properties?: {
+    title?: string
+  }
+}
+
+interface SheetValues {
+  values?: string[][]
+}
+
 export async function GET() {
   try {
     console.log('🔍 DEBUG SHEETS: Starting debug process...')
@@ -159,7 +169,7 @@ async function testSheetAccess(accessToken: string, sheetId: string) {
     throw new Error(`Sheet metadata access failed: ${metadataResponse.status} - ${errorText}`)
   }
 
-  const metadata = await metadataResponse.json() as any
+  const metadata = await metadataResponse.json() as SheetMetadata
   console.log('🔍 DEBUG SHEETS: Sheet metadata:', metadata.properties?.title)
 
   // Test 2: Try to read values
@@ -180,7 +190,7 @@ async function testSheetAccess(accessToken: string, sheetId: string) {
     }
   }
 
-  const values = await valuesResponse.json() as any
+  const values = await valuesResponse.json() as SheetValues
   console.log('🔍 DEBUG SHEETS: Values read success:', values)
 
   return {
