@@ -9,7 +9,7 @@ interface GoogleOAuthResponse {
   access_token: string
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('🔍 DEBUG SHEETS: Starting debug process...')
     

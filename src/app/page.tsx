@@ -396,9 +396,9 @@ export default function Home() {
            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
              <p className="text-sm"><strong>🔍 Debug Steps:</strong></p>
              <ol className="text-sm mt-2 ml-4 space-y-1 list-decimal">
-               <li>Click "Test API /api/track" - should show success</li>
-               <li>Click "Debug Google Sheets API" - check environment variables</li>
-               <li>Click "Monitor Sheet Realtime" - watch for new rows</li>
+               <li>Click &quot;Test API /api/track&quot; - should show success</li>
+               <li>Click &quot;Debug Google Sheets API&quot; - check environment variables</li>
+               <li>Click &quot;Monitor Sheet Realtime&quot; - watch for new rows</li>
                <li>Check debug console below for detailed logs</li>
              </ol>
            </div>
