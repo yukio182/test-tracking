@@ -32,6 +32,9 @@ export default function Home() {
   }
 
   useEffect(() => {
+    // Chỉ chạy trên client-side
+    if (typeof window === 'undefined') return
+
     const gatherVisitorInfo = () => {
       addLog('🚀 Bắt đầu thu thập thông tin visitor...')
 
