@@ -1,9 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+interface VisitorRequest {
+  hostname?: string
+  path?: string
+  referrer?: string
+  device?: string
+  os?: string
+  browser?: string
+  screenResolution?: string
+  language?: string
+  timezone?: string
+}
+
+interface VisitorData {
+  timestamp: string
+  hostname: string
+  ip: string
+  country: string
+  city: string
+  asn: string
+  device: string
+  os: string
+  browser: string
+  userAgent: string
+  path: string
+  referrer: string
+  cfRay: string
+}
+
+interface ServiceAccount {
+  client_email: string
+  private_key: string
+}
+
+interface GoogleOAuthResponse {
+  access_token: string
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Lấy visitor data từ request
-    const data = await request.json() as any
+    const data = await request.json() as VisitorRequest
     
     // Thêm thông tin từ headers
     const visitorData = {
@@ -34,7 +71,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function writeToGoogleSheet(data: any) {
+async function writeToGoogleSheet(data: VisitorData) {
   try {
     const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON
     if (!serviceAccountJson) {
@@ -58,7 +95,7 @@ async function writeToGoogleSheet(data: any) {
   }
 }
 
-async function createJWT(serviceAccount: any) {
+async function createJWT(serviceAccount: ServiceAccount) {
   const header = {
     alg: 'RS256',
     typ: 'JWT'
@@ -112,11 +149,11 @@ async function getAccessToken(jwt: string) {
     body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
   })
   
-  const data = await response.json()
+  const data = await response.json() as GoogleOAuthResponse
   return data.access_token
 }
 
-async function appendToSheet(accessToken: string, visitorData: any) {
+async function appendToSheet(accessToken: string, visitorData: VisitorData) {
   const sheetId = process.env.GOOGLE_SHEET_ID || '10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo'
   const range = 'Sheet1!A:K'
   
