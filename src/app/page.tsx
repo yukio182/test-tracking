@@ -95,6 +95,61 @@ export default function Home() {
     gatherVisitorInfo()
   }, [])
 
+  // Test API endpoint manually
+  const testApiEndpoint = async () => {
+    addLog('🧪 Manual API test started...')
+    
+    const testData = {
+      hostname: 'test.localhost',
+      path: '/manual-test',
+      referrer: 'manual-test',
+      device: 'Test Device',
+      os: 'Test OS',
+      browser: 'Test Browser'
+    }
+
+    try {
+      const response = await fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testData)
+      })
+
+      const result = await response.json()
+      addLog(`🧪 Manual test result: ${JSON.stringify(result)}`)
+      
+      if (response.ok) {
+        alert('✅ API test successful! Check debug console and Google Sheet.')
+      } else {
+        alert('❌ API test failed! Check debug console for details.')
+      }
+    } catch (error) {
+      addLog(`🧪 Manual test error: ${error}`)
+      alert('🚨 API test error! Check console.')
+    }
+  }
+
+  // Test Google Sheets permission
+  const testGoogleSheetsPermission = async () => {
+    addLog('🔐 Testing Google Sheets API directly...')
+    
+    try {
+      const response = await fetch('/api/debug-sheets')
+      const result = await response.json()
+      
+      addLog(`🔐 Debug API result: ${JSON.stringify(result, null, 2)}`)
+      
+      if (response.ok) {
+        alert('✅ Google Sheets API test successful! Check debug console.')
+      } else {
+        alert('❌ Google Sheets API test failed! Check debug console.')
+      }
+    } catch (error) {
+      addLog(`🔐 Debug API error: ${error}`)
+      alert('🚨 Debug API error! Check console.')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="max-w-7xl mx-auto">
@@ -230,17 +285,136 @@ export default function Home() {
           </div>
         )}
 
-        {/* Footer với Links */}
-        <footer className="mt-16 text-center border-t border-gray-200 dark:border-gray-700 pt-8">
-          <div className="flex flex-wrap justify-center gap-6">
-            <a
-              href="https://docs.google.com/spreadsheets/d/10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo/edit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-            >
-              📊 Xem Google Sheet
-            </a>
+                 {/* Google Sheets Debug Section */}
+         <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+           <h2 className="text-2xl font-semibold mb-4">📊 Google Sheets Integration</h2>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div>
+               <h3 className="text-lg font-medium mb-2">🔗 Direct Links</h3>
+               <div className="space-y-2">
+                 <a
+                   href="https://docs.google.com/spreadsheets/d/10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo/edit"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="block w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-center"
+                 >
+                   📊 Open Google Sheet (View Data)
+                 </a>
+                 <a
+                   href="https://console.cloud.google.com/apis/credentials?project=testtrackingdns"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="block w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-center"
+                 >
+                   🔑 Google Cloud Console
+                 </a>
+               </div>
+             </div>
+             <div>
+               <h3 className="text-lg font-medium mb-2">📋 Sheet Info</h3>
+               <div className="text-sm space-y-1">
+                 <div><strong>Sheet ID:</strong> <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo</code></div>
+                 <div><strong>Service Account:</strong> <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded text-xs">testtracking@testtrackingdns.iam.gserviceaccount.com</code></div>
+                 <div><strong>Project:</strong> <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">testtrackingdns</code></div>
+               </div>
+             </div>
+           </div>
+         </div>
+
+         {/* Domain Setup Info */}
+         <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+           <h2 className="text-2xl font-semibold mb-4">🌐 Subdomain Setup: tiktok.chumy.vn</h2>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div>
+               <h3 className="text-lg font-medium mb-3">📋 Current Status</h3>
+               <div className="space-y-2">
+                 <div className="flex items-center gap-2">
+                   <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
+                   <span>Domain: <code>tiktok.chumy.vn</code> (Not configured)</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                   <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+                   <span>Current: <code>{window.location.hostname}</code></span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                   <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
+                   <span>Target: Custom domain tracking</span>
+                 </div>
+               </div>
+             </div>
+             <div>
+               <h3 className="text-lg font-medium mb-3">⚙️ Setup Required</h3>
+               <div className="text-sm space-y-1">
+                 <div>1. <strong>DNS CNAME Record:</strong></div>
+                 <div className="ml-4 bg-gray-100 dark:bg-gray-700 p-2 rounded font-mono text-xs">
+                   tiktok.chumy.vn → [cloudflare-pages-url]
+                 </div>
+                 <div>2. <strong>Cloudflare Pages Custom Domain</strong></div>
+                 <div>3. <strong>SSL Certificate (Auto)</strong></div>
+               </div>
+             </div>
+           </div>
+           <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+             <p className="text-sm"><strong>📞 Need Help?</strong> Please provide:</p>
+             <ul className="text-sm mt-2 ml-4 space-y-1">
+               <li>• Where is <code>chumy.vn</code> hosted? (Cloudflare, GoDaddy, etc.)</li>
+               <li>• Who manages DNS records?</li>
+               <li>• Current Cloudflare Pages URL for this project?</li>
+             </ul>
+           </div>
+         </div>
+
+         {/* API Testing Section */}
+         <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+           <h2 className="text-2xl font-semibold mb-4">🧪 API Testing & Debug</h2>
+           <div className="flex flex-wrap gap-4">
+             <button 
+               onClick={() => testApiEndpoint()}
+               className="px-6 py-3 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+             >
+               🚀 Test API /api/track
+             </button>
+             <button 
+               onClick={() => testGoogleSheetsPermission()}
+               className="px-6 py-3 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
+             >
+               🔐 Debug Google Sheets API
+             </button>
+             <button 
+               onClick={() => window.open('https://docs.google.com/spreadsheets/d/10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo/edit', '_blank')}
+               className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+             >
+               📊 Monitor Sheet Realtime
+             </button>
+             <button 
+               onClick={() => window.open('/api/debug-sheets', '_blank')}
+               className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+             >
+               🐛 Raw Debug API
+             </button>
+           </div>
+           <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+             <p className="text-sm"><strong>🔍 Debug Steps:</strong></p>
+             <ol className="text-sm mt-2 ml-4 space-y-1 list-decimal">
+               <li>Click "Test API /api/track" - should show success</li>
+               <li>Click "Debug Google Sheets API" - check environment variables</li>
+               <li>Click "Monitor Sheet Realtime" - watch for new rows</li>
+               <li>Check debug console below for detailed logs</li>
+             </ol>
+           </div>
+         </div>
+
+         {/* Footer với Links */}
+         <footer className="mt-16 text-center border-t border-gray-200 dark:border-gray-700 pt-8">
+           <div className="flex flex-wrap justify-center gap-6">
+             <a
+               href="https://docs.google.com/spreadsheets/d/10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo/edit"
+               target="_blank"
+               rel="noopener noreferrer"
+               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+             >
+               📊 Xem Google Sheet
+             </a>
             <a
               href="/TRACKING-SETUP.md"
               target="_blank"
