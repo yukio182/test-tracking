@@ -39,8 +39,24 @@ interface GoogleOAuthResponse {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔍 API TRACK: POST request received')
+    
     // Lấy visitor data từ request
     const data = await request.json() as VisitorRequest
+    console.log('🔍 API TRACK: Request body parsed:', data)
+    
+    // Log tất cả headers quan trọng
+    const headers = {
+      'cf-connecting-ip': request.headers.get('cf-connecting-ip'),
+      'cf-ipcountry': request.headers.get('cf-ipcountry'),
+      'cf-ipcity': request.headers.get('cf-ipcity'),
+      'cf-asn': request.headers.get('cf-asn'),
+      'cf-ray': request.headers.get('cf-ray'),
+      'x-forwarded-for': request.headers.get('x-forwarded-for'),
+      'x-real-ip': request.headers.get('x-real-ip'),
+      'user-agent': request.headers.get('user-agent')
+    }
+    console.log('🔍 API TRACK: Request headers:', headers)
     
     // Thêm thông tin từ headers
     const visitorData = {
@@ -61,37 +77,58 @@ export async function POST(request: NextRequest) {
       cfRay: request.headers.get('cf-ray') || ''
     }
 
+    console.log('🔍 API TRACK: Final visitor data:', visitorData)
+
     // Ghi vào Google Sheets
     await writeToGoogleSheet(visitorData)
     
-    return NextResponse.json({ success: true })
+    console.log('🔍 API TRACK: ✅ Response success')
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Visitor tracked successfully',
+      data: visitorData 
+    })
   } catch (error) {
-    console.error('Error tracking visitor:', error)
-    return NextResponse.json({ error: 'Failed to track visitor' }, { status: 500 })
+    console.error('🔍 API TRACK: 🚨 Error tracking visitor:', error)
+    return NextResponse.json({ 
+      error: 'Failed to track visitor',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }
 
 async function writeToGoogleSheet(data: VisitorData) {
   try {
+    console.log('🔍 GOOGLE SHEETS: Starting write process...')
+    
     const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON
     if (!serviceAccountJson) {
-      console.log('Google Service Account not configured')
+      console.log('🔍 GOOGLE SHEETS: ⚠️ Service Account not configured in environment')
       return
     }
 
+    console.log('🔍 GOOGLE SHEETS: Service Account JSON found, parsing...')
     const serviceAccount = JSON.parse(serviceAccountJson)
+    console.log('🔍 GOOGLE SHEETS: Using service account:', serviceAccount.client_email)
     
     // Tạo JWT token
+    console.log('🔍 GOOGLE SHEETS: Creating JWT token...')
     const jwt = await createJWT(serviceAccount)
+    console.log('🔍 GOOGLE SHEETS: JWT token created successfully')
     
     // Lấy access token
+    console.log('🔍 GOOGLE SHEETS: Getting access token...')
     const accessToken = await getAccessToken(jwt)
+    console.log('🔍 GOOGLE SHEETS: Access token obtained')
     
     // Ghi data vào sheet
+    console.log('🔍 GOOGLE SHEETS: Writing data to sheet...')
     await appendToSheet(accessToken, data)
+    console.log('🔍 GOOGLE SHEETS: ✅ Data written successfully!')
     
   } catch (error) {
-    console.error('Error writing to Google Sheet:', error)
+    console.error('🔍 GOOGLE SHEETS: 🚨 Error writing to Google Sheet:', error)
+    throw error // Re-throw để API route có thể catch
   }
 }
 
@@ -157,6 +194,9 @@ async function appendToSheet(accessToken: string, visitorData: VisitorData) {
   const sheetId = process.env.GOOGLE_SHEET_ID || '10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo'
   const range = 'Sheet1!A:K'
   
+  console.log('🔍 APPEND SHEET: Sheet ID:', sheetId)
+  console.log('🔍 APPEND SHEET: Range:', range)
+  
   const values = [[
     visitorData.timestamp,
     visitorData.hostname,
@@ -170,7 +210,15 @@ async function appendToSheet(accessToken: string, visitorData: VisitorData) {
     visitorData.userAgent
   ]]
   
+  console.log('🔍 APPEND SHEET: Row data to append:', values[0])
+  
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=RAW`
+  console.log('🔍 APPEND SHEET: API URL:', url)
+  
+  const requestBody = {
+    values: values
+  }
+  console.log('🔍 APPEND SHEET: Request body:', requestBody)
   
   const response = await fetch(url, {
     method: 'POST',
@@ -178,16 +226,20 @@ async function appendToSheet(accessToken: string, visitorData: VisitorData) {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      values: values
-    })
+    body: JSON.stringify(requestBody)
   })
   
+  console.log('🔍 APPEND SHEET: Response status:', response.status)
+  
   if (!response.ok) {
-    throw new Error(`Google Sheets API error: ${response.status} ${response.statusText}`)
+    const errorText = await response.text()
+    console.error('🔍 APPEND SHEET: 🚨 API Error response:', errorText)
+    throw new Error(`Google Sheets API error: ${response.status} ${response.statusText} - ${errorText}`)
   }
   
-  console.log('Successfully logged visitor to Google Sheet')
+  const responseData = await response.json()
+  console.log('🔍 APPEND SHEET: ✅ Success response:', responseData)
+  console.log('🔍 APPEND SHEET: Successfully logged visitor to Google Sheet')
 }
 
 function str2ab(str: string) {

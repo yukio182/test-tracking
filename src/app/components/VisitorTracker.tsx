@@ -10,10 +10,19 @@ export default function VisitorTracker({ enabled = true }: VisitorTrackerProps) 
   useEffect(() => {
     if (!enabled) return
 
+    // Kiểm tra xem trang có phải là demo page không (để tránh double tracking)
+    if (window.location.pathname === '/') {
+      console.log('🔍 VISITOR TRACKER: Skipping auto-track on demo page to avoid double tracking')
+      return
+    }
+
     const trackVisitor = async () => {
       try {
+        console.log('🔍 VISITOR TRACKER: Starting automatic tracking...')
+        
         // Parse User-Agent để lấy thông tin device, OS, browser
         const deviceInfo = parseUserAgent(navigator.userAgent)
+        console.log('🔍 VISITOR TRACKER: Device info detected:', deviceInfo)
         
         const visitorData = {
           hostname: window.location.hostname,
@@ -27,8 +36,10 @@ export default function VisitorTracker({ enabled = true }: VisitorTrackerProps) 
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || ''
         }
 
+        console.log('🔍 VISITOR TRACKER: Sending data to API...', visitorData)
+
         // Gửi data đến API route
-        await fetch('/api/track', {
+        const response = await fetch('/api/track', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -36,9 +47,13 @@ export default function VisitorTracker({ enabled = true }: VisitorTrackerProps) 
           body: JSON.stringify(visitorData)
         })
 
-        console.log('Visitor tracked successfully')
+        if (response.ok) {
+          console.log('🔍 VISITOR TRACKER: ✅ Visitor tracked successfully!')
+        } else {
+          console.error('🔍 VISITOR TRACKER: ❌ API response error:', response.status)
+        }
       } catch (error) {
-        console.error('Failed to track visitor:', error)
+        console.error('🔍 VISITOR TRACKER: 🚨 Failed to track visitor:', error)
       }
     }
 
