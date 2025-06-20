@@ -1,22 +1,27 @@
-# Next.js Framework Starter
+# 📊 TikTok Visitor Tracking - Next.js Project
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/next-starter-template)
+🎯 **Track visitors on tiktok.chumy.vn with realtime Google Sheets logging**
 
-<!-- dash-content-start -->
+This is a [Next.js](https://nextjs.org/) project deployed on Cloudflare Pages with integrated visitor tracking system.
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app). It's deployed on Cloudflare Workers as a [static website](https://developers.cloudflare.com/workers/static-assets/).
+## ✅ Features
 
-This template uses [OpenNext](https://opennext.js.org/) via the [OpenNext Cloudflare adapter](https://opennext.js.org/cloudflare), which works by taking the Next.js build output and transforming it, so that it can run in Cloudflare Workers.
+- 🚀 **Next.js 15.3.3** with App Router
+- 📊 **Automatic visitor tracking** for tiktok.chumy.vn
+- 📝 **Google Sheets integration** - realtime data logging
+- 🌍 **Geo-location tracking** via Cloudflare headers
+- 📱 **Device/Browser detection** from User-Agent
+- ⚡ **Cloudflare Pages deployment** optimized
 
-<!-- dash-content-end -->
-
-Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
+## 📋 Quick Start
 
 ```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/next-starter-template
+git clone https://github.com/yukio182/test-tracking.git
+cd test-tracking
+npm install
 ```
 
-A live public deployment of this template is available at [https://next-starter-template.templates.workers.dev](https://next-starter-template.templates.workers.dev)
+📖 **Full setup guide**: [TRACKING-SETUP.md](./TRACKING-SETUP.md)
 
 ## Getting Started
 
