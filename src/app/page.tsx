@@ -337,7 +337,7 @@ export default function Home() {
                  </div>
                  <div className="flex items-center gap-2">
                    <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                   <span>Current: <code>{window.location.hostname}</code></span>
+                   <span>Current: <code>{typeof window !== 'undefined' ? window.location.hostname : 'loading...'}</code></span>
                  </div>
                  <div className="flex items-center gap-2">
                    <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
@@ -384,13 +384,13 @@ export default function Home() {
                🔐 Debug Google Sheets API
              </button>
              <button 
-               onClick={() => window.open('https://docs.google.com/spreadsheets/d/10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo/edit', '_blank')}
+               onClick={() => typeof window !== 'undefined' && window.open('https://docs.google.com/spreadsheets/d/10RN0XpPpLyVmQB-sEbAgWxmyAcU2Bcwkr_k29RakGTo/edit', '_blank')}
                className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
              >
                📊 Monitor Sheet Realtime
              </button>
              <button 
-               onClick={() => window.open('/api/debug-sheets', '_blank')}
+               onClick={() => typeof window !== 'undefined' && window.open('/api/debug-sheets', '_blank')}
                className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
              >
                🐛 Raw Debug API
